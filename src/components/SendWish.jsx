@@ -75,7 +75,7 @@ function timeAgo(ts) {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-function WishBubble({ wish, index }) {
+function WishBubble({ wish, quizTries, index }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -85,25 +85,41 @@ function WishBubble({ wish, index }) {
 
   return (
     <div
-      className="flex items-start gap-3 bg-white/10 border border-yellow-500/20 rounded-2xl px-4 py-3 transition-all duration-500"
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-      }}
+      className="flex flex-col gap-2 bg-white/10 border border-yellow-500/20 rounded-2xl px-4 py-3 transition-all duration-500"
+      style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)" }}
     >
-      <span className="text-2xl">{wish.emoji}</span>
-      <div className="flex-1 min-w-0">
-        <p className="text-yellow-300 font-semibold text-sm">{wish.name}</p>
-        <p className="text-yellow-100/80 text-xs mt-0.5">{wish.message}</p>
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{wish.emoji}</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-yellow-300 font-semibold text-sm">{wish.name}</p>
+          <p className="text-yellow-100/80 text-xs mt-0.5">{wish.message}</p>
+        </div>
+        <span className="text-yellow-500/40 text-xs shrink-0">{timeAgo(wish.createdAt)}</span>
       </div>
-      <span className="text-yellow-500/40 text-xs shrink-0">{timeAgo(wish.createdAt)}</span>
+      {quizTries.length > 0 && (
+        <div className="flex flex-wrap gap-2 pt-1 border-t border-white/10">
+          {quizTries.map((t, i) => {
+            const perfect = t.score === t.total;
+            return (
+              <span
+                key={i}
+                className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  perfect ? "bg-yellow-500/30 text-yellow-300" : t.score >= t.total * 0.7 ? "bg-green-500/20 text-green-300" : "bg-white/10 text-white/40"
+                }`}
+              >
+                {perfect ? "🏆" : "⭐"} Try {t.attempt ?? i + 1}: {t.score}/{t.total}
+              </span>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
 
-export default function SendWish() {
-  const [name, setName] = useState("");
+export default function SendWish({ playerName }) {
   const [wishes, setWishes] = useState([]);
+  const [quizResults, setQuizResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [confettiKey, setConfettiKey] = useState(0);
   const [justSent, setJustSent] = useState(null);
@@ -118,20 +134,33 @@ export default function SendWish() {
     return () => unsub();
   }, []);
 
+  useEffect(() => {
+    const q = query(collection(db, "quizResults"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      setQuizResults(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsub();
+  }, []);
+
+  function getQuizTries(name) {
+    return quizResults
+      .filter((r) => r.name.toLowerCase() === name.toLowerCase())
+      .sort((a, b) => (a.attempt ?? a.createdAt?.toMillis?.() ?? 0) - (b.attempt ?? b.createdAt?.toMillis?.() ?? 0));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!playerName) return;
 
     const wish = {
-      name: name.trim(),
+      name: playerName,
       emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
       message: MESSAGES[Math.floor(Math.random() * MESSAGES.length)],
       createdAt: serverTimestamp(),
     };
 
-    setJustSent(name.trim());
+    setJustSent(playerName);
     setConfettiKey((k) => k + 1);
-    setName("");
     setTimeout(() => setJustSent(null), 3000);
     setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
 
@@ -150,17 +179,12 @@ export default function SendWish() {
       </p>
 
       <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Your name..."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={30}
-          className="flex-1 bg-white/10 border border-yellow-500/40 rounded-xl px-4 py-3 text-yellow-100 placeholder-yellow-300/40 outline-none focus:border-yellow-400 transition"
-        />
+        <div className="flex-1 bg-white/10 border border-yellow-500/20 rounded-xl px-4 py-3 text-yellow-300 font-semibold">
+          {playerName ? `👤 ${playerName}` : <span className="text-yellow-500/40">Complete the quiz first to send a wish</span>}
+        </div>
         <button
           type="submit"
-          disabled={!name.trim()}
+          disabled={!playerName}
           className="bg-yellow-500 hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-stone-900 font-bold px-5 rounded-xl transition-all active:scale-95"
         >
           🐑 Send
@@ -184,7 +208,7 @@ export default function SendWish() {
         ) : wishes.length === 0 ? (
           <p className="text-center text-yellow-500/50 text-sm py-6">Be the first to send a wish! 🐑</p>
         ) : (
-          wishes.map((w, i) => <WishBubble key={w.id} wish={w} index={i} />)
+          wishes.map((w, i) => <WishBubble key={w.id} wish={w} quizTries={getQuizTries(w.name)} index={i} />)
         )}
       </div>
     </section>

@@ -147,6 +147,7 @@ function MosqueSilhouette() {
 }
 
 export default function App() {
+  const [playerName, setPlayerName] = useState(null);
   const [blessings, setBlessings] = useState([]);
   const [confetti, setConfetti] = useState([]);
   const [ripples, setRipples] = useState([]);
@@ -248,7 +249,7 @@ export default function App() {
           >
             Eid Mubarak
           </span>
-          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-yellow-500/50 group-hover:text-yellow-400/80 transition-colors tracking-widest uppercase whitespace-nowrap">
+          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-yellow-400 font-semibold tracking-widest uppercase whitespace-nowrap border border-yellow-500/40 bg-yellow-500/10 px-3 py-0.5 rounded-full">
             ✦ tap me ✦
           </span>
         </button>
@@ -281,7 +282,7 @@ export default function App() {
           <div className="flex-1 h-px bg-gradient-to-l from-transparent to-yellow-500/30" />
         </div>
 
-        <div className="relative z-10"><EidQuiz /></div>
+        <div className="relative z-10"><EidQuiz playerName={playerName} onNameSet={setPlayerName} /></div>
 
         <div className="relative z-10 flex items-center gap-4 px-8 max-w-5xl mx-auto">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent to-yellow-500/30" />
@@ -289,7 +290,7 @@ export default function App() {
           <div className="flex-1 h-px bg-gradient-to-l from-transparent to-yellow-500/30" />
         </div>
 
-        <div className="relative z-10 pt-8"><SendWish /></div>
+        <div className="relative z-10 pt-8"><SendWish playerName={playerName} /></div>
 
         <footer className="relative z-10 text-center pb-8">
           <p className="text-white/20 text-xs tracking-widest">تقبل الله منا ومنكم — May Allah accept from us and from you</p>
