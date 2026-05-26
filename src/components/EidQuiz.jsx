@@ -373,6 +373,25 @@ export default function EidQuiz({ playerName: initialName, onNameSet }) {
                 )}
               </>
             )}
+
+            {/* Leaderboard always visible on done screen */}
+            {leaderboard.length > 0 && (
+              <div className="mt-8 text-left">
+                <p className="text-yellow-500/60 text-xs uppercase tracking-widest mb-3">🏆 Leaderboard</p>
+                <div className="flex flex-col gap-2">
+                  {leaderboard.map((r, i) => (
+                    <div key={r.name} className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2">
+                      <span className="text-white/30 text-xs w-5">{i + 1}.</span>
+                      <span className={`text-sm font-semibold flex-1 ${r.name === playerName ? "text-yellow-300" : "text-white/70"}`}>{r.name} {r.name === playerName ? "(you)" : ""}</span>
+                      <span className="text-white/40 text-xs">{r.tries} {r.tries === 1 ? "try" : "tries"}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${r.best === Q_PER_ROUND ? "bg-yellow-500/30 text-yellow-300" : "bg-white/10 text-white/50"}`}>
+                        {r.best === Q_PER_ROUND ? "🏆" : "⭐"} {r.best}/{Q_PER_ROUND}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <>
