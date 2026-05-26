@@ -282,7 +282,7 @@ export default function App() {
           <div className="flex-1 h-px bg-gradient-to-l from-transparent to-yellow-500/30" />
         </div>
 
-        <div className="relative z-10"><EidQuiz playerName={playerName} onNameSet={setPlayerName} /></div>
+        <div className="relative z-10" id="quiz-section"><EidQuiz playerName={playerName} onNameSet={setPlayerName} /></div>
 
         <div className="relative z-10 flex items-center gap-4 px-8 max-w-5xl mx-auto">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent to-yellow-500/30" />

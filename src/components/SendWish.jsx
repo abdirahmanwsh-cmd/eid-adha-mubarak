@@ -198,8 +198,17 @@ export default function SendWish({ playerName }) {
             {sending ? "Sending..." : "🐑 Send"}
           </button>
         ) : (
-          <div className="bg-green-500/20 border border-green-500/30 text-green-300 font-bold px-4 rounded-xl flex items-center text-sm">
-            ✅ Sent!
+          <div className="flex gap-2">
+            <div className="bg-green-500/20 border border-green-500/30 text-green-300 font-bold px-4 rounded-xl flex items-center text-sm">
+              ✅ Sent!
+            </div>
+            <button
+              type="button"
+              onClick={() => document.getElementById("quiz-section")?.scrollIntoView({ behavior: "smooth" })}
+              className="bg-white/10 hover:bg-white/20 border border-yellow-500/30 text-yellow-300 font-bold px-4 py-2 rounded-xl transition-all active:scale-95 text-sm"
+            >
+              🏆 See Leaderboard
+            </button>
           </div>
         )}
       </form>
