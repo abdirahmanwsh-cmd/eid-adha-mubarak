@@ -152,9 +152,11 @@ export default function SendWish({ playerName }) {
       .sort((a, b) => (a.attempt ?? a.createdAt?.toMillis?.() ?? 0) - (b.attempt ?? b.createdAt?.toMillis?.() ?? 0));
   }
 
+  const [hasSent, setHasSent] = useState(false);
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!playerName || sending) return;
+    if (!playerName || sending || hasSent) return;
     setSending(true);
 
     const wish = {
@@ -166,6 +168,7 @@ export default function SendWish({ playerName }) {
 
     await addDoc(collection(db, "wishes"), wish);
     setSending(false);
+    setHasSent(true);
     setJustSent(playerName);
     setConfettiKey((k) => k + 1);
     setTimeout(() => setJustSent(null), 3000);
@@ -186,13 +189,19 @@ export default function SendWish({ playerName }) {
         <div className="flex-1 bg-white/10 border border-yellow-500/20 rounded-xl px-4 py-3 text-yellow-300 font-semibold">
           {playerName ? `👤 ${playerName}` : <span className="text-yellow-500/40">Complete the quiz first to send a wish</span>}
         </div>
-        <button
-          type="submit"
-          disabled={!playerName || sending}
-          className="bg-yellow-500 hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-stone-900 font-bold px-5 rounded-xl transition-all active:scale-95"
-        >
-          {sending ? "Sending..." : "🐑 Send"}
-        </button>
+        {!hasSent ? (
+          <button
+            type="submit"
+            disabled={!playerName || sending}
+            className="bg-yellow-500 hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-stone-900 font-bold px-5 rounded-xl transition-all active:scale-95"
+          >
+            {sending ? "Sending..." : "🐑 Send"}
+          </button>
+        ) : (
+          <div className="bg-green-500/20 border border-green-500/30 text-green-300 font-bold px-4 rounded-xl flex items-center text-sm">
+            ✅ Sent!
+          </div>
+        )}
       </form>
 
       {/* Success toast */}
