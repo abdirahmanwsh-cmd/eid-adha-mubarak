@@ -131,9 +131,12 @@ export default function SendWish({ playerName }) {
     const unsub = onSnapshot(q, (snap) => {
       setWishes(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       setLoading(false);
+      if (justSent) {
+        setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+      }
     });
     return () => unsub();
-  }, []);
+  }, [justSent]);
 
   useEffect(() => {
     const q = query(collection(db, "quizResults"), orderBy("createdAt", "desc"));
@@ -166,7 +169,6 @@ export default function SendWish({ playerName }) {
     setJustSent(playerName);
     setConfettiKey((k) => k + 1);
     setTimeout(() => setJustSent(null), 3000);
-    setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   }
 
   return (
