@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes shootingStar {
+  0% { opacity: 0; transform: rotate(-35deg) translateX(0); }
+  10% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(-35deg) translateX(300px); }
+}
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.15; }
+  50% { opacity: 0.25; }
+  100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+}
+@keyframes rippleOut {
+  0% { width: 0; height: 0; opacity: 0.8; }
+  100% { width: 600px; height: 600px; opacity: 0; }
+}
+@keyframes blessingFloat {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  15% { opacity: 1; transform: translate(-50%, -70%) scale(1.2); }
+  60% { opacity: 1; transform: translate(-50%, -200%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -320%) scale(0.85); }
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) translateX(var(--drift)) rotate(720deg); opacity: 0; }
+}
+@keyframes starTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(0.5); }
+}
+@keyframes lanternGlow {
+  0%, 100% { box-shadow: 0 0 15px #f59e0b88, 0 0 40px #f59e0b33, inset 0 0 15px #fde68a44; }
+  50% { box-shadow: 0 0 30px #f59e0bcc, 0 0 70px #f59e0b55, inset 0 0 25px #fde68a66; }
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 #f59e0b66; }
+  70% { transform: scale(1); box-shadow: 0 0 0 14px #f59e0b00; }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 #f59e0b00; }
+}
+@keyframes moonRise {
+  from { opacity: 0; transform: translateY(30px) scale(0.8); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ropeSwing {
+  0%, 100% { transform-origin: top center; transform: rotate(-6deg); }
+  50% { transform-origin: top center; transform: rotate(6deg); }
+}
+
+.float { animation: float 5s ease-in-out infinite; }
+.sway { animation: ropeSwing 3s ease-in-out infinite; }
+.shimmer-text {
+  font-family: 'Amiri', serif;
+  background: linear-gradient(90deg, #fbbf24, #fde68a, #f59e0b, #fde68a, #fbbf24);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+.star { animation: starTwinkle var(--duration, 2s) ease-in-out infinite; }
+.lantern-glow { animation: lanternGlow 2.5s ease-in-out infinite; }
+.pulse-ring { animation: pulseRing 2s ease-out infinite; }
+.moon-rise { animation: moonRise 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+body { font-family: 'Inter', sans-serif; }
