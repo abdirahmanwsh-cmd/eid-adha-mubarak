@@ -123,6 +123,7 @@ export default function SendWish({ playerName }) {
   const [loading, setLoading] = useState(true);
   const [confettiKey, setConfettiKey] = useState(0);
   const [justSent, setJustSent] = useState(null);
+  const [sending, setSending] = useState(false);
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -150,7 +151,8 @@ export default function SendWish({ playerName }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!playerName) return;
+    if (!playerName || sending) return;
+    setSending(true);
 
     const wish = {
       name: playerName,
@@ -159,12 +161,12 @@ export default function SendWish({ playerName }) {
       createdAt: serverTimestamp(),
     };
 
+    await addDoc(collection(db, "wishes"), wish);
+    setSending(false);
     setJustSent(playerName);
     setConfettiKey((k) => k + 1);
     setTimeout(() => setJustSent(null), 3000);
     setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-
-    await addDoc(collection(db, "wishes"), wish);
   }
 
   return (
@@ -184,10 +186,10 @@ export default function SendWish({ playerName }) {
         </div>
         <button
           type="submit"
-          disabled={!playerName}
+          disabled={!playerName || sending}
           className="bg-yellow-500 hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-stone-900 font-bold px-5 rounded-xl transition-all active:scale-95"
         >
-          🐑 Send
+          {sending ? "Sending..." : "🐑 Send"}
         </button>
       </form>
 
